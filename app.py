@@ -252,11 +252,11 @@ with col2:
 
     st.subheader("✅ Positive Prompt")
     st.code(final_prompt, language="text")
-    st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
+    #st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
 
     st.subheader("❌ Negative Prompt")
     st.code(negative_prompt, language="text")
-    st.download_button("⬇ Download Negative Prompt", negative_prompt, file_name="negative_prompt.txt")
+    #st.download_button("⬇ Download Negative Prompt", negative_prompt, file_name="negative_prompt.txt")
 
 
 footer = """
