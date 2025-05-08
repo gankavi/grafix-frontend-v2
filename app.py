@@ -113,8 +113,8 @@ ocean_elements = [
 with st.sidebar:
     st.header("🎧 Prompt Settings")
 
-    characters = st.text_area("Character(s)", "Zamindar with golden sword, Queen in royal saree")
-    scene_action = st.text_area("Scene Narrative", "Walking in a palace corridor with sunlight filtering")
+    characters = st.text_area("Character(s)", "tiger")
+    scene_action = st.text_area("Scene Narrative", "Walking in a forest with sunlight filtering")
 
     selected_style = st.selectbox("Art Style", styles)
     selected_portrait_style = st.selectbox("Portrait Style", portrait_styles)
