@@ -30,7 +30,7 @@ styles = [
     "Digital Painting", "Comic", "Manga", "Pixel Art", "Cyberpunk",
     "Watercolor", "Line Art", "Ink Drawing", "Concept Art", "3D Render",
     "Low Poly", "Realistic", "Photorealistic", "Surrealism", "Dark Fantasy",
-    "Dreamlike", "Noir", "Pop Art", "Graffiti"
+    "Dreamlike", "Noir", "Pop Art", "Graffiti", "stickers"
 ]
 
 portrait_styles = [
