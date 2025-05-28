@@ -183,7 +183,7 @@ with st.sidebar:
     st.header("🎧 Prompt Settings")
 # Character(s)
     if st.session_state.guided_mode and st.session_state.tooltip_stage == 0:
-        st.markdown('<div class="tooltip-balloon">🧙 Choose Character(s)</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🧙 Write Character(s)</div>', unsafe_allow_html=True)
     characters = st.text_area("Character(s)", "", key="characters")
     if st.session_state.tooltip_stage == 0 and characters.strip():
         st.session_state.tooltip_stage += 1
@@ -470,32 +470,31 @@ with col2:
    # st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
     components.html(f"""
         <script>
-            function copyToClipboard() {{
+            function copyFinalPromptToClipboard() {{
                 navigator.clipboard.writeText(`{final_prompt}`);
-                
             }}
         </script>
-        <button onclick="copyToClipboard()"
+        <button onclick="copyFinalPromptToClipboard()"
                 style="margin-top:10px; padding:10px 20px; font-size:16px; background:#00b894; color:white; border:none; border-radius:6px; cursor:pointer;">
-            📋 Copy to Clipboard
+            📋 Copy Final Prompt
         </button>
     """, height=80)
 
     st.subheader("❌ Negative Prompt")
     st.code(negative_prompt, language="text")
-  #  st.download_button("⬇ Download Negative Prompt", negative_prompt, file_name="negative_prompt.txt")
+
     components.html(f"""
         <script>
-            function copyToClipboard() {{
+            function copyNegativePromptToClipboard() {{
                 navigator.clipboard.writeText(`{negative_prompt}`);
-                
             }}
         </script>
-        <button onclick="copyToClipboard()"
-                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#00b894; color:white; border:none; border-radius:6px; cursor:pointer;">
-            📋 Copy to Clipboard
+        <button onclick="copyNegativePromptToClipboard()"
+                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#d63031; color:white; border:none; border-radius:6px; cursor:pointer;">
+            📋 Copy Negative Prompt
         </button>
     """, height=80)
+
 
 
 footer = """
