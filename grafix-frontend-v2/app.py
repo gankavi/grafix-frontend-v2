@@ -183,7 +183,7 @@ with st.sidebar:
     st.header("🎧 Prompt Settings")
 # Character(s)
     if st.session_state.guided_mode and st.session_state.tooltip_stage == 0:
-        st.markdown('<div class="tooltip-balloon">🧙 பாத்திரங்களை உள்ளிடவும்</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🧙 Choose Character(s)</div>', unsafe_allow_html=True)
     characters = st.text_area("Character(s)", "", key="characters")
     if st.session_state.tooltip_stage == 0 and characters.strip():
         st.session_state.tooltip_stage += 1
@@ -191,7 +191,7 @@ with st.sidebar:
 
 # Scene Narrative
     if st.session_state.guided_mode and st.session_state.tooltip_stage == 1:
-        st.markdown('<div class="tooltip-balloon">🎬 காட்சியின் விவரத்தை எழுதவும்</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🎬 Write Scene/div>', unsafe_allow_html=True)
     scene_action = st.text_area("Scene Narrative", "", key="scene_action")
     if st.session_state.tooltip_stage == 1 and scene_action.strip():
         st.session_state.tooltip_stage += 1
@@ -199,7 +199,7 @@ with st.sidebar:
         
     # 3️⃣ Art Style
     if st.session_state.guided_mode and st.session_state.tooltip_stage == 2:
-        st.markdown('<div class="tooltip-balloon">🖌️ கலைபாணியை தேர்ந்தெடுக்கவும்</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🖌️ Choose Art Style</div>', unsafe_allow_html=True)
     selected_style = st.selectbox("Art Style", styles, key="style")
     if st.session_state.tooltip_stage == 2 and selected_style != "None":
         st.session_state.tooltip_stage += 1
@@ -218,7 +218,7 @@ with st.sidebar:
 
     # 4️⃣ Pose
     if st.session_state.guided_mode and st.session_state.tooltip_stage == 4:
-        st.markdown('<div class="tooltip-balloon">🕴️ நிலைப்பாட்டை தேர்ந்தெடுக்கவும்</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🕴️ Choose Pose</div>', unsafe_allow_html=True)
     selected_pose = st.selectbox("Pose", poses, key="pose")
     if st.session_state.tooltip_stage == 4 and selected_pose != "None":
         st.session_state.tooltip_stage += 1
