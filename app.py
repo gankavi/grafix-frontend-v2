@@ -1,10 +1,51 @@
 import streamlit as st
 import base64
+import streamlit.components.v1 as components
+
+
+
+# Add after imports
+if 'tooltip_stage' not in st.session_state:
+    st.session_state.tooltip_stage = 0
+if 'guided_mode' not in st.session_state:
+    st.session_state.guided_mode = True
+
 
 # -------------------
 # PAGE CONFIG
 # -------------------
 st.set_page_config(page_title="GraFix AI Studio - Prompt Builder", layout="wide")
+
+# Add this CSS near the top
+st.markdown("""
+<style>
+.tooltip-balloon {
+    position: relative;
+    background: #1E90FF;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 8px;
+    width: fit-content;
+    font-size: 14px;
+    margin-bottom: 6px;
+    box-shadow: 0 0 12px #1E90FF, 0 0 18px #1E90FF;
+    animation: balloonBounce 1.2s ease-out infinite;
+}
+.tooltip-balloon::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 20px;
+    border-width: 8px;
+    border-style: solid;
+    border-color: #1E90FF transparent transparent transparent;
+}
+@keyframes balloonBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+</style>
+""", unsafe_allow_html=True)
 
 # -------------------
 # BANNER
@@ -30,7 +71,7 @@ styles = [
     "Digital Painting", "Comic", "Manga", "Pixel Art", "Cyberpunk",
     "Watercolor", "Line Art", "Ink Drawing", "Concept Art", "3D Render",
     "Low Poly", "Realistic", "Photorealistic", "Surrealism", "Dark Fantasy",
-    "Dreamlike", "Noir", "Pop Art", "Graffiti", "stickers"
+    "Dreamlike", "Noir", "Pop Art", "Graffiti"
 ]
 
 portrait_styles = [
@@ -111,23 +152,119 @@ ocean_elements = [
 # SIDEBAR UI
 # -------------------
 with st.sidebar:
+    
+   # 👣 Guided Mode Toggle — Fix double-click issue
+    st.subheader("👣 Guided Mode")
+
+# checkbox directly updates guided_mode state
+ # 1️⃣ Show checkbox & store in session (always)
+    prev_guided = st.session_state.get("guided_mode", True)
+    guided_mode = st.checkbox("🧭 Enable Guided Mode", value=prev_guided)
+    
+    # 🔁 Optional: Reset tooltip if turning ON
+    if guided_mode and st.session_state.get("tooltip_stage", 0) >= 99:
+        st.session_state.tooltip_stage = 0
+
+# ⛔ Skip Button (only show when guided is ON)
+    if guided_mode:
+        if st.sidebar.button("❌ Skip All Tooltips"):
+            st.session_state.tooltip_stage = 999  # Push to a non-existent stage
+
+    if guided_mode != prev_guided:
+        st.session_state.guided_mode = guided_mode
+        if guided_mode:
+            st.session_state.tooltip_stage = 0  # Reset tooltip flow
+        st.rerun()  # ✅ Force immediate update
+
+
+
+
+    
     st.header("🎧 Prompt Settings")
+# Character(s)
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 0:
+        st.markdown('<div class="tooltip-balloon">🧙 பாத்திரங்களை உள்ளிடவும்</div>', unsafe_allow_html=True)
+    characters = st.text_area("Character(s)", "", key="characters")
+    if st.session_state.tooltip_stage == 0 and characters.strip():
+        st.session_state.tooltip_stage += 1
+        st.rerun()
 
-    characters = st.text_area("Character(s)", "tiger")
-    scene_action = st.text_area("Scene Narrative", "Walking in a forest with sunlight filtering")
+# Scene Narrative
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 1:
+        st.markdown('<div class="tooltip-balloon">🎬 காட்சியின் விவரத்தை எழுதவும்</div>', unsafe_allow_html=True)
+    scene_action = st.text_area("Scene Narrative", "", key="scene_action")
+    if st.session_state.tooltip_stage == 1 and scene_action.strip():
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+        
+    # 3️⃣ Art Style
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 2:
+        st.markdown('<div class="tooltip-balloon">🖌️ கலைபாணியை தேர்ந்தெடுக்கவும்</div>', unsafe_allow_html=True)
+    selected_style = st.selectbox("Art Style", styles, key="style")
+    if st.session_state.tooltip_stage == 2 and selected_style != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
 
-    selected_style = st.selectbox("Art Style", styles)
-    selected_portrait_style = st.selectbox("Portrait Style", portrait_styles)
-    selected_comic_style = st.selectbox("Comic Style", comic_styles)
+    # 5️⃣ Portrait Style
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 3:
+        st.markdown('<div class="tooltip-balloon">🧑‍🎨 Choose Portrait Style</div>', unsafe_allow_html=True)
+    selected_portrait_style = st.selectbox("Portrait Style", portrait_styles, key="portrait_style")
+    if st.session_state.tooltip_stage == 3 and selected_portrait_style != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+    
+    # 6️⃣ Comic Style
+    selected_comic_style = st.selectbox("Comic Style", comic_styles) 
 
-    selected_pose = st.selectbox("Pose", poses)
+    # 4️⃣ Pose
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 4:
+        st.markdown('<div class="tooltip-balloon">🕴️ நிலைப்பாட்டை தேர்ந்தெடுக்கவும்</div>', unsafe_allow_html=True)
+    selected_pose = st.selectbox("Pose", poses, key="pose")
+    if st.session_state.tooltip_stage == 4 and selected_pose != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+        
+    # 7️⃣ Clothing
     selected_clothing = st.selectbox("Clothing", clothing)
-    selected_background = st.selectbox("Background", backgrounds)
+
+# 8️⃣ Background
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 5:
+        st.markdown('<div class="tooltip-balloon">🏞️ Choose Background</div>', unsafe_allow_html=True)
+    selected_background = st.selectbox("Background", backgrounds, key="background")
+    if st.session_state.tooltip_stage == 5 and selected_background != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+
+# 9️⃣ Country
     selected_country = st.selectbox("Origin / Culture", countries)
+
+# 🔟 Object
     selected_object = st.selectbox("Object", objects)
-    selected_angle = st.selectbox("Angle", angles)
-    selected_camera = st.selectbox("Camera Setup", camera_setups)
-    selected_lighting = st.selectbox("Lighting", lighting_setups)
+
+# 1️⃣1️⃣ Angle
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 6:
+        st.markdown('<div class="tooltip-balloon">📐 Choose Camera Angle</div>', unsafe_allow_html=True)
+    selected_angle = st.selectbox("Angle", angles, key="angle")
+    if st.session_state.tooltip_stage == 6 and selected_angle != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+
+# 1️⃣2️⃣ Camera Setup
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 7:
+        st.markdown('<div class="tooltip-balloon">🎥 Camera Setup?</div>', unsafe_allow_html=True)
+    selected_camera = st.selectbox("Camera Setup", camera_setups, key="camera")
+    if st.session_state.tooltip_stage == 7 and selected_camera != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+
+# 1️⃣3️⃣ Lighting
+    if st.session_state.guided_mode and st.session_state.tooltip_stage == 8:
+        st.markdown('<div class="tooltip-balloon">💡 Lighting Setup</div>', unsafe_allow_html=True)
+    selected_lighting = st.selectbox("Lighting", lighting_setups, key="lighting")
+    if st.session_state.tooltip_stage == 8 and selected_lighting != "None":
+        st.session_state.tooltip_stage += 1
+        st.rerun()
+
     selected_dof = st.selectbox("Depth of Field", depth_of_field)
     selected_lens = st.selectbox("Lens Type", lens_types)
     selected_focus = st.selectbox("Focus Distance", focus_distance)
@@ -136,7 +273,7 @@ with st.sidebar:
     selected_ad_type = st.selectbox("🗾 Ad Type", ad_types)
     selected_vehicle = st.selectbox("🚗 Vehicle", vehicles)
     selected_sea_creature = st.selectbox("🌊 Sea Creature", sea_creatures)
-    selected_ocean_element = st.selectbox("🌧️ Water Element", ocean_elements)
+    selected_ocean_element = st.selectbox("🌧️ Water Element", ocean_elements) 
 
 # -------------------
 # MAIN UI - RIGHT SIDE CONTROLS
@@ -199,9 +336,87 @@ def generate_story_style_prompt(style, base):
 
 # Center-aligned button using column trick
 center_col2, right_col3 = st.columns([2, 1])
+with col2:  # Or wherever your layout is
+
+    st.markdown("### ")  # Optional spacing
+
+# 🎯 Tooltip logic (top of your section)
+# 🎯 Tooltip logic (top of your section)
+
+    FINAL_TOOLTIP_STAGE = 9  # or appropriate number
 with col2:
-    if st.button("✨ Generate Prompt", use_container_width=True):
-        st.session_state.generated_prompt = True
+    if guided_mode and st.session_state.get("tooltip_stage") == FINAL_TOOLTIP_STAGE:
+        st.markdown('<div class="tooltip-balloon">🚀 ப்ராம்ப்ட் உருவாக்க கிளிக் செய்யவும்</div>', unsafe_allow_html=True)
+with col2:
+# ✨ SINGLE generate button with key
+    generate = st.button("✨ Generate Prompt", use_container_width=True, key="generate_prompt_btn")
+
+if generate:
+    st.session_state.generated_prompt = True
+    #st.balloons()
+
+    # ✅ Fields collect
+    char = st.session_state.get("char", "").strip()
+    scene = st.session_state.get("scene", "").strip()
+    fields = {
+        "Art Style": st.session_state.get('style', ''),
+        "Portrait": st.session_state.get('portrait_style', ''),
+        "Comic": st.session_state.get('comic_style', ''),
+        "Pose": st.session_state.get('pose', ''),
+        "Clothing": st.session_state.get('clothing', ''),
+        "Background": st.session_state.get('background', ''),
+        "Culture": st.session_state.get('country', ''),
+        "Object": st.session_state.get('object', ''),
+        "Angle": st.session_state.get('angle', ''),
+        "Camera Setup": st.session_state.get('camera', ''),
+        "Lighting": st.session_state.get('lighting', ''),
+        "DOF": st.session_state.get('dof', ''),
+        "Lens": st.session_state.get('lens', ''),
+        "Focus": st.session_state.get('focus', ''),
+        "Music": st.session_state.get('music', ''),
+        "Camera Model": st.session_state.get('cam_model', ''),
+        "Ad Type": st.session_state.get('ad', ''),
+        "Vehicle": st.session_state.get('vehicle', ''),
+        "Sea Creature": st.session_state.get('sea_creature', ''),
+        "Water Element": st.session_state.get('ocean_element', ''),
+    }
+
+    # ✅ Prompt generate
+    prompt_intro = ", ".join(filter(None, [char, scene]))
+    prompt_tags = ", ".join([f"{k}: {v}" for k, v in fields.items() if v and v != "None"])
+    final_prompt = f"{prompt_intro}, {prompt_tags}".strip(", ")
+
+    # ✅ Now display in col2 — inside the if
+    with col2:
+       
+
+        st.markdown("""
+        <div style='background-color:#454c4d;padding:15px;border-left:6px solid #00b894;border-radius:8px'>
+            <p style="font-size:12px;">
+                ✅ <strong>ப்ராம்ப்ட் வெற்றிகரமாக உருவாக்கப்பட்டது!</strong><br/>
+                ✅ இந்த ப்ராம்ப்ட்டை <a href='https://gemini.google.com/' target='_blank'>Google Gemini</a> -க்கு Paste செய்யவும்.<br/>
+                🔎 பிறகு <strong>Enter</strong> அழுத்தி உங்கள் கலைப்படத்தை உருவாக்குங்கள்! 🎨, <br/>
+                ✅ <strong>Prompt successfully generated!</strong><br/>
+                ✅ Paste this prompt into <a href='https://gemini.google.com/' target='_blank'>Google Gemini</a>.<br/>
+                🔎 Then press <strong>Enter</strong> to create your stunning artwork! 🎨
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+    
+    
+
+    
+
+  
+   
+
+
+
+
+
+
+
 
 # Show info if button not clicked yet
 with col2:
@@ -252,11 +467,35 @@ with col2:
 
     st.subheader("✅ Positive Prompt")
     st.code(final_prompt, language="text")
-    #st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
+   # st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
+    components.html(f"""
+        <script>
+            function copyToClipboard() {{
+                navigator.clipboard.writeText(`{final_prompt}`);
+                
+            }}
+        </script>
+        <button onclick="copyToClipboard()"
+                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#00b894; color:white; border:none; border-radius:6px; cursor:pointer;">
+            📋 Copy to Clipboard
+        </button>
+    """, height=80)
 
     st.subheader("❌ Negative Prompt")
     st.code(negative_prompt, language="text")
-    #st.download_button("⬇ Download Negative Prompt", negative_prompt, file_name="negative_prompt.txt")
+  #  st.download_button("⬇ Download Negative Prompt", negative_prompt, file_name="negative_prompt.txt")
+    components.html(f"""
+        <script>
+            function copyToClipboard() {{
+                navigator.clipboard.writeText(`{negative_prompt}`);
+                
+            }}
+        </script>
+        <button onclick="copyToClipboard()"
+                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#00b894; color:white; border:none; border-radius:6px; cursor:pointer;">
+            📋 Copy to Clipboard
+        </button>
+    """, height=80)
 
 
 footer = """
