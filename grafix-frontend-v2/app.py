@@ -346,7 +346,7 @@ with col2:  # Or wherever your layout is
     FINAL_TOOLTIP_STAGE = 9  # or appropriate number
 with col2:
     if guided_mode and st.session_state.get("tooltip_stage") == FINAL_TOOLTIP_STAGE:
-        st.markdown('<div class="tooltip-balloon">🚀 ப்ராம்ப்ட் உருவாக்க கிளிக் செய்யவும்</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tooltip-balloon">🚀 Click Generate Prompt Button</div>', unsafe_allow_html=True)
 with col2:
 # ✨ SINGLE generate button with key
     generate = st.button("✨ Generate Prompt", use_container_width=True, key="generate_prompt_btn")
