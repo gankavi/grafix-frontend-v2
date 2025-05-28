@@ -468,33 +468,12 @@ with col2:
     st.subheader("✅ Positive Prompt")
     st.code(final_prompt, language="text")
    # st.download_button("⬇ Download Positive Prompt", final_prompt, file_name="positive_prompt.txt")
-    components.html(f"""
-        <script>
-            function copyFinalPromptToClipboard() {{
-                navigator.clipboard.writeText(`{final_prompt}`);
-            }}
-        </script>
-        <button onclick="copyFinalPromptToClipboard()"
-                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#00b894; color:white; border:none; border-radius:6px; cursor:pointer;">
-            📋 Copy Final Prompt
-        </button>
-    """, height=80)
+    
 
     st.subheader("❌ Negative Prompt")
     st.code(negative_prompt, language="text")
 
-    components.html(f"""
-        <script>
-            function copyNegativePromptToClipboard() {{
-                navigator.clipboard.writeText(`{negative_prompt}`);
-            }}
-        </script>
-        <button onclick="copyNegativePromptToClipboard()"
-                style="margin-top:10px; padding:10px 20px; font-size:16px; background:#d63031; color:white; border:none; border-radius:6px; cursor:pointer;">
-            📋 Copy Negative Prompt
-        </button>
-    """, height=80)
-
+    
 
 
 footer = """
